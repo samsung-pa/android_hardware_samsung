@@ -7,14 +7,12 @@
 package org.lineageos.samsung.biometrics;
 
 import android.content.Context;
-import android.os.IBinder;
+import android.hardware.biometrics.IBiometricContextListener;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
 
 import com.android.internal.statusbar.IStatusBarService;
-
-import android.hardware.biometrics.IBiometricContextListener;
 
 public class SemDisplayStateListener {
     private static final String TAG = "SemDisplayStateListener";
@@ -43,8 +41,7 @@ public class SemDisplayStateListener {
                 }
             };
 
-    public SemDisplayStateListener(Context context,
-                                   SemFodModeController fodController) {
+    public SemDisplayStateListener(Context context, SemFodModeController fodController) {
         mContext = context;
         mFodController = fodController;
         mStatusBarService = IStatusBarService.Stub.asInterface(
@@ -58,7 +55,7 @@ public class SemDisplayStateListener {
         }
         try {
             Log.i(TAG, "Registering BiometricContextListener for display events");
-            // There are no typos. Biometic is correct...
+            // API name preserved as per original file note
             mStatusBarService.setBiometicContextListener(mContextListener);
         } catch (RemoteException e) {
             Log.e(TAG, "Failed to register context listener", e);
@@ -76,19 +73,19 @@ public class SemDisplayStateListener {
 
     private void handleDisplayState(int displayState) {
         switch (displayState) {
-            case 0:
+            case SemFodModeController.DISPLAY_STATE_UNKNOWN:
                 Log.i(TAG, "Display state: Unknown");
                 break;
-            case 1:
+            case SemFodModeController.DISPLAY_STATE_LOCKSCREEN:
                 Log.i(TAG, "Display state: Lockscreen");
                 break;
-            case 2:
+            case SemFodModeController.DISPLAY_STATE_NO_UI:
                 Log.i(TAG, "Display state: OFF");
                 break;
-            case 3:
+            case SemFodModeController.DISPLAY_STATE_SCREENSAVER:
                 Log.i(TAG, "Display state: ScreenSaver");
                 break;
-            case 4:
+            case SemFodModeController.DISPLAY_STATE_AOD:
                 Log.i(TAG, "Display state: AoD");
                 break;
             default:

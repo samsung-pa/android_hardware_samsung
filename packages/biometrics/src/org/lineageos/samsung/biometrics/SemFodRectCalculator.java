@@ -7,6 +7,7 @@
 package org.lineageos.samsung.biometrics;
 
 import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.content.Context;
 import android.graphics.Rect;
 import android.hardware.biometrics.SensorLocationInternal;
@@ -20,8 +21,6 @@ import java.util.List;
 
 public class SemFodRectCalculator {
     private static final String TAG = "SemFodRectCalculator";
-
-    public static final String TSP_CMD_PATH = "/sys/class/sec/tsp/cmd";
 
     @NonNull
     private final Context mContext;
@@ -41,14 +40,16 @@ public class SemFodRectCalculator {
         }
 
         mFodRect = new Rect(rect);
-
         final String cmd = buildTspFodRectCommand(mFodRect);
+
         try {
-            Utils.writeFile(new File(TSP_CMD_PATH), cmd.getBytes(StandardCharsets.UTF_8));
+            // Using constant from Controller to avoid duplication
+            File cmdFile = new File(SemFodModeController.TSP_CMD_PATH);
+            Utils.writeFile(cmdFile, cmd.getBytes(StandardCharsets.UTF_8));
             Log.i(TAG, "Wrote FOD rect to TSP: " + cmd.trim());
             return true;
         } catch (Throwable t) {
-            Log.e(TAG, "Failed writing FOD rect to " + TSP_CMD_PATH, t);
+            Log.e(TAG, "Failed writing FOD rect", t);
             return false;
         }
     }
@@ -58,6 +59,7 @@ public class SemFodRectCalculator {
         return "set_fod_rect," + r.left + "," + r.top + "," + r.right + "," + r.bottom + "\n";
     }
 
+    @Nullable
     private Rect getUdfpsRectFromFramework() {
         final FingerprintManager fm = mContext.getSystemService(FingerprintManager.class);
         if (fm == null) {
@@ -69,7 +71,7 @@ public class SemFodRectCalculator {
         try {
             props = fm.getSensorPropertiesInternal();
         } catch (Throwable t) {
-            Log.e(TAG, "getSensorPropertiesInternal() not available on this branch", t);
+            Log.e(TAG, "getSensorPropertiesInternal() not available", t);
             return null;
         }
 

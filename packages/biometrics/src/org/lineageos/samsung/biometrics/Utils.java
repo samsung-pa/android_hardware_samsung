@@ -11,43 +11,39 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-public class Utils {
 
-    public static byte[] readFile(File file) throws IOException {
-        byte[] bArr = null;
+public class Utils {
+    private static final String TAG = "BiometricUtils";
+
+    public static byte[] readFile(File file) {
         if (!file.exists()) {
-            Slog.i("BiometricUtils", "Invalid file info, " + file);
+            Slog.i(TAG, "File does not exist: " + file);
             return null;
         }
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            try {
-                bArr = new byte[(int) file.length()];
-                fileInputStream.read(bArr);
-                fileInputStream.close();
-                return bArr;
-            } finally {
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] data = new byte[(int) file.length()];
+            int bytesRead = fis.read(data);
+            if (bytesRead == -1) {
+                Slog.w(TAG, "File was empty: " + file);
+                return null;
             }
+            return data;
         } catch (IOException e) {
-            Slog.w("BiometricUtils", "failed to read file", e);
-            return bArr;
+            Slog.w(TAG, "Failed to read file: " + file, e);
+            return null;
         }
     }
 
-    public static void writeFile(File file, byte[] bArr) throws IOException {
-        if (bArr == null) {
+    public static void writeFile(File file, byte[] data) {
+        if (data == null) {
             return;
         }
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            try {
-                fileOutputStream.write(bArr);
-                fileOutputStream.close();
-            } finally {
-            }
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(data);
         } catch (IOException e) {
-            Slog.w("BiometricUtils", "failed to write file", e);
+            Slog.w(TAG, "Failed to write file: " + file, e);
         }
     }
 }
