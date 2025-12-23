@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import org.lineageos.samsung.biometrics.DisplayBrightnessMonitor;
-
 public final class MaskView implements DisplayBrightnessMonitor.OnBrightnessListener {
     private final Context mContext;
     private final WindowManager mWm;
@@ -115,7 +113,7 @@ public final class MaskView implements DisplayBrightnessMonitor.OnBrightnessList
         return lp;
     }
 
-public final void updateBackgroundColor(int displayBrightness) {
+public void updateBackgroundColor(int displayBrightness) {
         if (displayBrightness == -1) {
             displayBrightness = mDisplayBrightnessMonitor.getCurrentBrightness();
         }

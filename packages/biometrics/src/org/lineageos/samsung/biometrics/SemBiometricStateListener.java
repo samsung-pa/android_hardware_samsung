@@ -14,8 +14,6 @@ import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
 import android.hardware.fingerprint.IFingerprintAuthenticatorsRegisteredCallback;
 import android.util.Log;
 
-import org.lineageos.samsung.biometrics.DisplayBrightnessMonitor;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -7,14 +7,12 @@
 package org.lineageos.samsung.biometrics;
 
 import android.content.Context;
-import android.os.IBinder;
+import android.hardware.biometrics.IBiometricContextListener;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
 
 import com.android.internal.statusbar.IStatusBarService;
-
-import android.hardware.biometrics.IBiometricContextListener;
 
 public class SemDisplayStateListener {
     private static final String TAG = "SemDisplayStateListener";

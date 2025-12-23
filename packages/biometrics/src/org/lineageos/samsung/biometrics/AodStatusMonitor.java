@@ -111,8 +111,7 @@ public final class AodStatusMonitor {
     public boolean isAodActive() {
         if (!mIsDozeEnabled) return false;
         if (!mIsAlwaysOnEnabled) return false;
-        if (mIsScheduleEnabled && !isInScheduleTime()) return false;
-        return true;
+        return !mIsScheduleEnabled || isInScheduleTime();
     }
 
     /**

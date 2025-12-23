@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import org.lineageos.samsung.biometrics.Utils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
