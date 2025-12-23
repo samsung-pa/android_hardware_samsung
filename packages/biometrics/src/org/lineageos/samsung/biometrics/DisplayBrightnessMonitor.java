@@ -1,4 +1,4 @@
-package org.lineageos.samsung.biometrics.fingerprint;
+package org.lineageos.samsung.biometrics;
 
 import android.os.Build;
 import android.os.FileObserver;

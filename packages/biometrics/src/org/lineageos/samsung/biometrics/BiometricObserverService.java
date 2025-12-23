@@ -18,6 +18,7 @@ public class BiometricObserverService extends Service {
     private SemBiometricStateListener mBiometricObserver;
     private SemFodModeController mFodController;
     private SemFodRectCalculator mFodRectCalculator;
+    private SemDisplaySolution mDisplaySolution;
 
     @Override
     public void onCreate() {
@@ -28,6 +29,7 @@ public class BiometricObserverService extends Service {
         mFodRectCalculator = new SemFodRectCalculator(this);
         mDisplayObserver = new SemDisplayStateListener(this, mFodController);
         mBiometricObserver = new SemBiometricStateListener(this, mFodController);
+        mDisplaySolution = new SemDisplaySolution(this);
 
         mFodRectCalculator.writeFodRect();
         mDisplayObserver.register();

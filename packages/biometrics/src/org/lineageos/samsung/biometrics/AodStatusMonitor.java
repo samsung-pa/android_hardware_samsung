@@ -1,4 +1,4 @@
-package org.lineageos.samsung.biometrics.fingerprint;
+package org.lineageos.samsung.biometrics;
 
 import static android.provider.Settings.Secure.DOZE_ALWAYS_ON;
 import static android.provider.Settings.Secure.DOZE_ENABLED;

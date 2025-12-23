@@ -14,6 +14,8 @@ import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
 import android.hardware.fingerprint.IFingerprintAuthenticatorsRegisteredCallback;
 import android.util.Log;
 
+import org.lineageos.samsung.biometrics.DisplayBrightnessMonitor;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,14 +25,27 @@ public class SemBiometricStateListener {
     @NonNull
     private final Context mContext;
     private final SemFodModeController mFodController;
+    private final SemDisplaySolution mDisplaySolution;
+
+    private final DisplayBrightnessMonitor mDisplayBrightnessMonitor;
+    private final MaskView mMaskView; // your overlay
 
     private FingerprintManager mFingerprintManager;
     private BiometricStateListener mListener;
     private final AtomicBoolean mRegistered = new AtomicBoolean(false);
 
-    public SemBiometricStateListener(@NonNull Context context, SemFodModeController fodController) {
+    public SemBiometricStateListener(@NonNull Context context,
+                                     SemFodModeController fodController,
+                                     SemDisplaySolution mDisplaySolution /* or SemDisplaySolutionManager */) {
         mContext = context;
         mFodController = fodController;
+
+        // 1) brightness monitor instance
+        mDisplayBrightnessMonitor = DisplayBrightnessMonitor.getInstance();
+
+        // 2) overlay that implements OnBrightnessListener internally
+        mMaskView = new MaskView(mContext, mDisplayBrightnessMonitor, mDisplaySolution);
+        // ^ pass whatever class provides getAlphaMaskLevel()
     }
 
     public void register() {
@@ -38,6 +53,19 @@ public class SemBiometricStateListener {
     }
 
     public void unregister() {
+        // Always hide + stop listening to brightness to avoid window leaks
+        mMaskView.hide();
+        mMaskView.stop(); // unregister brightness listener
+
+        if (mFingerprintManager != null && mListener != null && mRegistered.get()) {
+            try {
+                mFingerprintManager.unregisterBiometricStateListener(mListener);
+            } catch (Throwable t) {
+                Log.w(TAG, "Failed to unregister BiometricStateListener", t);
+            } finally {
+                mRegistered.set(false);
+            }
+        }
     }
 
     private void registerSemBiometricStateListener() {
@@ -90,9 +118,13 @@ public class SemBiometricStateListener {
         switch (newState) {
             case 0:
                 Log.i(TAG, "Biometric state: Idle");
+                mMaskView.hide();
+                mMaskView.stop(); // stop brightness updates when not needed
                 break;
             case 1:
                 Log.i(TAG, "Biometric state: Enrolling");
+                mMaskView.start(); // register brightness listener
+                mMaskView.show();
                 break;
             case 2:
                 Log.i(TAG, "Biometric state: Keyguard Auth");
@@ -104,7 +136,7 @@ public class SemBiometricStateListener {
                 Log.i(TAG, "Biometric state: Other Auth");
                 break;
             default:
-                Log.i(TAG, "Unknown State??? " + newState);
+                Log.i(TAG, "Unknown state " + newState);
         }
     }
 }
