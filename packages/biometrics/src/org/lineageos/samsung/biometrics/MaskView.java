@@ -109,7 +109,7 @@ public final class MaskView implements DisplayBrightnessMonitor.OnBrightnessList
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
-        int type = WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY;
+        int type = WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL;
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 size.x,
